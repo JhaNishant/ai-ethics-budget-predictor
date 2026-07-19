@@ -28,7 +28,7 @@
       color: white;
       background: linear-gradient(135deg, var(--navy), var(--blue));
     }
-    header .inner, main { max-width: 1120px; margin: auto; }
+    header .inner, main { max-width: 1280px; margin: auto; }
     h1 { margin: 0 0 12px; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.05; }
     header p { max-width: 780px; margin: 0; font-size: 1.15rem; opacity: .92; }
     .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
@@ -43,12 +43,36 @@
       box-shadow: 0 10px 30px rgba(24,59,86,.06);
     }
     h2 { margin-top: 0; color: var(--navy); }
+    h3 { margin: 34px 0 14px; color: var(--navy); font-size: 1.2rem; }
     li { margin: 9px 0; }
     .callout { border-left: 5px solid var(--teal); }
-    .figure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
-    figure { margin: 0; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
-    figure img { display: block; width: 100%; height: auto; border-radius: 8px; }
+    .figure-note { padding: 14px 16px; color: var(--navy); background: #eef5ff; border-radius: 10px; }
+    .figure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 22px; }
+    figure { margin: 0; padding: 12px; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+    .figure-wide { grid-column: 1 / -1; }
+    .chart-link { display: block; cursor: zoom-in; border-radius: 8px; overflow: hidden; background: #f8fafc; }
+    figure img { display: block; width: 100%; height: auto; border-radius: 8px; transition: transform .2s ease, filter .2s ease; }
+    .chart-link:hover img, .chart-link:focus img { transform: scale(1.015); filter: contrast(1.03); }
+    .chart-link:focus { outline: 3px solid var(--blue); outline-offset: 3px; }
     figcaption { padding: 10px 4px 2px; color: var(--muted); font-size: .93rem; }
+    .image-modal { position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; color: white; background: rgba(8, 15, 28, .96); }
+    .image-modal.open { display: flex; }
+    body.modal-open { overflow: hidden; }
+    .modal-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 64px; padding: 10px 18px; background: #111b2d; border-bottom: 1px solid rgba(255,255,255,.16); }
+    #modal-caption { font-weight: 650; }
+    .modal-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .modal-actions button, .modal-actions a { min-width: 42px; padding: 8px 11px; color: white; font: inherit; text-align: center; text-decoration: none; background: #253652; border: 1px solid rgba(255,255,255,.25); border-radius: 8px; cursor: pointer; }
+    .modal-actions button:hover, .modal-actions a:hover { background: var(--blue); }
+    #modal-close { font-size: 1.4rem; line-height: 1; }
+    .modal-canvas { flex: 1; display: flex; align-items: flex-start; justify-content: center; overflow: auto; padding: 22px; }
+    #modal-image { display: block; max-width: none; height: auto; background: white; box-shadow: 0 16px 48px rgba(0,0,0,.4); }
+    @media (max-width: 720px) {
+      section { padding: 20px; }
+      .figure-grid { grid-template-columns: 1fr; }
+      .modal-toolbar { align-items: flex-start; flex-direction: column; }
+      .modal-actions { width: 100%; flex-wrap: wrap; }
+      .modal-canvas { padding: 10px; }
+    }
     footer { padding: 24px; text-align: center; color: var(--muted); }
   </style>
 </head>
@@ -72,28 +96,106 @@
     <section><h2>Training Data</h2><ul><li>The original synthetic dataset contains 300,000 rows and six columns.</li><li>After removing rows with missing values, 156,317 rows remain. Keeping only bachelor&#x27;s, master&#x27;s, and high-school users leaves 103,459 rows.</li><li>The training set contains 51,729 rows. This is the only split changed by AIF360 Reweighing.</li></ul></section>
     <section><h2>Test Data</h2><ul><li>The validation set contains 31,038 rows and is used only to choose the prediction threshold.</li><li>The test set contains 20,692 rows and is kept separate until the final performance, fairness, confusion-matrix, interpretability, and cohort checks.</li><li>I used random seed 42 for every split so the results can be reproduced.</li></ul></section>
     <section class="callout"><h2>Quantitative Analysis</h2><ul><li>Before mitigation, Logistic Regression reached 0.9976 accuracy and 0.9980 balanced accuracy. Average odds difference was -0.5278, statistical parity difference was -0.9934, equal opportunity difference was -1.0000, and the Theil index was 0.0022.</li><li>After AIF360 Reweighing, accuracy was 0.9913 and balanced accuracy was 0.9831. Average odds difference improved to -0.0111, equal opportunity difference improved to 0.0000, statistical parity difference moved to -0.9522, and the Theil index stayed close to zero at 0.0033.</li><li>Average odds difference and equal opportunity difference are now inside the −0.10 to +0.10 fairness range. This means two required fairness metrics reached their target range.</li><li>Statistical parity difference is still far from its ideal value of zero. Reweighing made the error rates much fairer, but it did not remove the large difference in favorable predictions between education groups. The app still needs user control and regular fairness checks.</li><li>Balanced accuracy dropped slightly from 0.9980 to 0.9831. I consider that a reasonable trade-off for the major improvements in average odds and equal opportunity.</li></ul></section>
-    <section><h2>Final Model Visualizations</h2>
+    <section><h2>Quantitative Analysis Visualizations</h2>
+<p class="figure-note">All twelve project visualizations are included below. Click any chart to view it at full size, then use the zoom controls or open the original PNG in a new tab.</p>
+<h3>Data exploration</h3>
 <div class="figure-grid">
   <figure>
-    <img src="images/mitigated_lr_confusion_matrix.png" alt="Confusion matrix for the mitigated Logistic Regression model">
-    <figcaption>Final confusion matrix and aggregate performance.</figcaption>
+    <a class="chart-link" href="images/eda_group_representation.png" data-caption="Dataset representation after removing missing values">
+      <img loading="lazy" src="images/eda_group_representation.png" alt="Bar charts showing representation by gender, age, education, and budget">
+    </a>
+    <figcaption>Representation by gender, age, education, and budget class.</figcaption>
+  </figure>
+  <figure class="figure-wide">
+    <a class="chart-link" href="images/eda_correlation_matrix.png" data-caption="Correlation matrix of one-hot encoded variables">
+      <img loading="lazy" src="images/eda_correlation_matrix.png" alt="Correlation matrix of the encoded IDOOU variables">
+    </a>
+    <figcaption>Correlation matrix used to identify strong relationships and possible proxy effects.</figcaption>
+  </figure>
+</div>
+<h3>Model comparison before mitigation</h3>
+<div class="figure-grid">
+  <figure>
+    <a class="chart-link" href="images/model_accuracy_comparison.png" data-caption="Accuracy comparison of both models">
+      <img loading="lazy" src="images/model_accuracy_comparison.png" alt="Accuracy and balanced accuracy comparison">
+    </a>
+    <figcaption>Accuracy and balanced accuracy for Gaussian Naive Bayes and Logistic Regression.</figcaption>
   </figure>
   <figure>
-    <img src="images/fairness_before_after.png" alt="Fairness metrics before and after mitigation">
+    <a class="chart-link" href="images/model_fairness_comparison.png" data-caption="Fairness comparison before mitigation">
+      <img loading="lazy" src="images/model_fairness_comparison.png" alt="Fairness metrics for both models before mitigation">
+    </a>
+    <figcaption>Fairness metrics for both models before mitigation.</figcaption>
+  </figure>
+  <figure>
+    <a class="chart-link" href="images/gnb_confusion_matrix.png" data-caption="Gaussian Naive Bayes confusion matrix">
+      <img loading="lazy" src="images/gnb_confusion_matrix.png" alt="Gaussian Naive Bayes confusion matrix">
+    </a>
+    <figcaption>Gaussian Naive Bayes confusion matrix.</figcaption>
+  </figure>
+  <figure>
+    <a class="chart-link" href="images/lr_confusion_matrix.png" data-caption="Logistic Regression confusion matrix before mitigation">
+      <img loading="lazy" src="images/lr_confusion_matrix.png" alt="Logistic Regression confusion matrix before mitigation">
+    </a>
+    <figcaption>Logistic Regression confusion matrix before mitigation.</figcaption>
+  </figure>
+  <figure class="figure-wide">
+    <a class="chart-link" href="images/lr_permutation_importance.png" data-caption="Permutation importance before mitigation">
+      <img loading="lazy" src="images/lr_permutation_importance.png" alt="Logistic Regression permutation importance before mitigation">
+    </a>
+    <figcaption>Permutation importance for the selected model before mitigation.</figcaption>
+  </figure>
+</div>
+<h3>Final model after mitigation</h3>
+<div class="figure-grid">
+  <figure>
+    <a class="chart-link" href="images/fairness_before_after.png" data-caption="Fairness metrics before and after mitigation">
+      <img loading="lazy" src="images/fairness_before_after.png" alt="Fairness metrics before and after mitigation">
+    </a>
     <figcaption>Fairness metrics before and after AIF360 Reweighing.</figcaption>
   </figure>
   <figure>
-    <img src="images/mitigated_lr_permutation_importance.png" alt="Permutation importance after mitigation">
+    <a class="chart-link" href="images/mitigated_lr_confusion_matrix.png" data-caption="Final mitigated Logistic Regression confusion matrix">
+      <img loading="lazy" src="images/mitigated_lr_confusion_matrix.png" alt="Confusion matrix for the mitigated Logistic Regression model">
+    </a>
+    <figcaption>Final confusion matrix and overall performance.</figcaption>
+  </figure>
+  <figure class="figure-wide">
+    <a class="chart-link" href="images/mitigated_lr_permutation_importance.png" data-caption="Permutation importance after mitigation">
+      <img loading="lazy" src="images/mitigated_lr_permutation_importance.png" alt="Permutation importance after mitigation">
+    </a>
     <figcaption>Feature importance for the final mitigated model.</figcaption>
   </figure>
+</div>
+<h3>Education-level cohort checks</h3>
+<div class="figure-grid">
   <figure>
-    <img src="images/education_cohort_performance.png" alt="Performance by education-level cohort">
+    <a class="chart-link" href="images/education_cohort_performance.png" data-caption="Performance by education-level cohort">
+      <img loading="lazy" src="images/education_cohort_performance.png" alt="Performance by education-level cohort">
+    </a>
     <figcaption>Accuracy and balanced accuracy by education level.</figcaption>
   </figure>
   <figure>
-    <img src="images/education_cohort_fairness.png" alt="Fairness differences by education-level cohort">
-    <figcaption>Selection-rate and true-positive-rate differences by cohort.</figcaption>
+    <a class="chart-link" href="images/education_cohort_fairness.png" data-caption="Fairness differences by education-level cohort">
+      <img loading="lazy" src="images/education_cohort_fairness.png" alt="Fairness differences by education-level cohort">
+    </a>
+    <figcaption>Selection-rate and true-positive-rate differences by education level.</figcaption>
   </figure>
+</div>
+<div class="image-modal" id="image-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Visualization viewer">
+  <div class="modal-toolbar">
+    <span id="modal-caption"></span>
+    <div class="modal-actions">
+      <button type="button" id="zoom-out" aria-label="Zoom out">−</button>
+      <button type="button" id="zoom-reset">100%</button>
+      <button type="button" id="zoom-in" aria-label="Zoom in">+</button>
+      <a id="open-original" href="#" target="_blank" rel="noopener">Open PNG</a>
+      <button type="button" id="modal-close" aria-label="Close viewer">×</button>
+    </div>
+  </div>
+  <div class="modal-canvas" id="modal-canvas">
+    <img id="modal-image" src="" alt="">
+  </div>
 </div>
 </section>
     <section><h2>Ethical Considerations</h2><ul><li>People must stay in control because a budget estimate can change which activities they see. Users should be able to enter a budget, check and correct their information, reject the estimate, and ask for options outside the predicted price range.</li><li>The data has serious education-based label bias, too many younger users, too few older users, and many missing values. Removing incomplete rows may leave out privacy-conscious users, while education can act as a shortcut for wider income and class differences.</li><li>Before mitigation, the model treats high-school graduates poorly. False negatives can hide activities they could afford, while false positives can suggest activities they cannot afford and cause embarrassment or financial pressure.</li><li>I chose AIF360 Reweighing because it is clear, keeps the original labels, works with Logistic Regression weights, and can be checked before training. It brought average odds difference and equal opportunity difference into the ±0.10 fairness range with only a small performance drop.</li><li>Permutation importance shows that the 18–24 age group matters most before mitigation, followed by education. After Reweighing, education matters less but age matters even more. The app should explain this clearly and monitor results across age groups.</li><li>The model could stereotype users by education, hide useful activities, reinforce class-based assumptions, or cause discrimination if its prediction is reused for anything beyond activity planning.</li></ul></section>
@@ -101,5 +203,71 @@
     <section><h2>Business Consequences</h2><ul><li>Positive impact: If used carefully, the budget predictor can save users time and suggest activities that fit them better. Clear explanations and user controls can also help IDOOU earn trust.</li><li>Negative impact: If the app suggests insulting, unaffordable, or overly limited options because of a user&#x27;s education, people may see it as classist and stop using it. Complaints, bad publicity, partner concerns, and the cost of fixing the system could hurt both revenue and the brand.</li><li>IDOOU should not launch the feature unless it can monitor fairness, protect user data, let people correct predictions, provide human help when needed, and track complaints.</li></ul></section>
   </main>
   <footer>IDOOU AI Ethics Project · Generated from the reproducible project notebook.</footer>
+  <script>
+    const modal = document.getElementById('image-modal');
+    const modalCanvas = document.getElementById('modal-canvas');
+    const modalImage = document.getElementById('modal-image');
+    const modalCaption = document.getElementById('modal-caption');
+    const openOriginal = document.getElementById('open-original');
+    const zoomReset = document.getElementById('zoom-reset');
+    const closeButton = document.getElementById('modal-close');
+    let zoomLevel = 1;
+
+    function updateZoom() {
+      if (!modalImage.naturalWidth) return;
+      const availableWidth = Math.max(320, modalCanvas.clientWidth - 44);
+      const baseWidth = Math.min(modalImage.naturalWidth, availableWidth);
+      modalImage.style.width = `${Math.round(baseWidth * zoomLevel)}px`;
+      zoomReset.textContent = `${Math.round(zoomLevel * 100)}%`;
+    }
+
+    function openViewer(link) {
+      zoomLevel = 1;
+      modalImage.src = link.href;
+      modalImage.alt = link.querySelector('img').alt;
+      modalCaption.textContent = link.dataset.caption;
+      openOriginal.href = link.href;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      modalCanvas.scrollTo(0, 0);
+      modalImage.onload = updateZoom;
+      closeButton.focus();
+    }
+
+    function closeViewer() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+      modalImage.src = '';
+    }
+
+    document.querySelectorAll('.chart-link').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        openViewer(link);
+      });
+    });
+    document.getElementById('zoom-in').addEventListener('click', () => {
+      zoomLevel = Math.min(3, zoomLevel + 0.25);
+      updateZoom();
+    });
+    document.getElementById('zoom-out').addEventListener('click', () => {
+      zoomLevel = Math.max(0.5, zoomLevel - 0.25);
+      updateZoom();
+    });
+    zoomReset.addEventListener('click', () => {
+      zoomLevel = 1;
+      updateZoom();
+      modalCanvas.scrollTo(0, 0);
+    });
+    closeButton.addEventListener('click', closeViewer);
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('open')) closeViewer();
+    });
+    window.addEventListener('resize', () => {
+      if (modal.classList.contains('open')) updateZoom();
+    });
+  </script>
 </body>
 </html>
