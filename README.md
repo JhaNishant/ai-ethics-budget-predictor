@@ -1,6 +1,6 @@
 # AI Ethics: Personalized Budget Predictor
 
-This Udacity project builds an AI model for IDOOU, a hypothetical activity-recommendation app. The model predicts whether a user's activity budget is at least $300, then evaluates whether that prediction treats education groups fairly.
+In this Udacity project, I built a budget prediction model for IDOOU, a fictional activity-recommendation app. The model predicts whether a user's activity budget is at least $300. I then checked whether it treats education groups fairly, explained its predictions, and reduced some of its bias.
 
 ## What this project covers
 
@@ -14,14 +14,14 @@ This Udacity project builds an AI model for IDOOU, a hypothetical activity-recom
 
 ## Key results
 
-The source dataset is severely biased toward users with bachelor's or master's degrees. Its statistical parity difference is `-0.9837`, and its disparate impact is `0.0089`.
+The original data is heavily biased in favor of users with bachelor's or master's degrees. Statistical parity difference is `-0.9837`, and disparate impact is `0.0089`.
 
-The selected Logistic Regression model initially achieved `0.9980` balanced accuracy but reproduced that disparity. After AIF360 Reweighing:
+I selected Logistic Regression. It initially reached `0.9980` balanced accuracy, but it also repeated the same unfair pattern. After applying AIF360 Reweighing:
 
 - Balanced accuracy remained high at `0.9831`.
 - Average odds difference improved from `-0.5278` to `-0.0111`.
 - Equal opportunity difference improved from `-1.0000` to `0.0000`.
-- Statistical parity difference improved only modestly to `-0.9522`, so the remaining risk is clearly documented rather than hidden.
+- Statistical parity difference improved only slightly to `-0.9522`, so this problem is still clearly documented.
 
 ## Repository contents
 
@@ -46,4 +46,4 @@ Download `udacity_ai_ethics_project_data.csv` from the Udacity workspace into th
 
 ## Responsible-use note
 
-This model is a learning artifact, not a production decision system. A budget estimate must never be used for credit, insurance, employment, housing, pricing, eligibility, or other high-stakes decisions. A real IDOOU product should prioritize a budget entered directly by the user and provide correction, explanation, privacy, and opt-out controls.
+This is a learning project, not a production decision system. Its budget estimate must never be used for credit, insurance, jobs, housing, pricing, eligibility, or any other high-stakes decision. A real IDOOU app should use a budget entered directly by the user whenever possible and should always provide correction, explanation, privacy, and opt-out controls.
