@@ -151,6 +151,10 @@ activemq-data/
 .env
 .envrc
 .venv
+
+# Local Udacity project inputs and submission bundle
+udacity_ai_ethics_project_data.csv
+AI_Ethics_Project_Submission.zip
 env/
 venv/
 ENV/
