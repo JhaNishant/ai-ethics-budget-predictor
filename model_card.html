@@ -54,7 +54,9 @@
     figure img { display: block; width: 100%; height: auto; border-radius: 8px; transition: transform .2s ease, filter .2s ease; }
     .chart-link:hover img, .chart-link:focus img { transform: scale(1.015); filter: contrast(1.03); }
     .chart-link:focus { outline: 3px solid var(--blue); outline-offset: 3px; }
-    figcaption { padding: 10px 4px 2px; color: var(--muted); font-size: .93rem; }
+    figcaption { padding: 12px 4px 4px; color: var(--muted); font-size: .93rem; line-height: 1.55; }
+    figcaption strong { color: var(--navy); }
+    .takeaway { display: block; margin-top: 6px; }
     .image-modal { position: fixed; inset: 0; z-index: 1000; display: none; flex-direction: column; color: white; background: rgba(8, 15, 28, .96); }
     .image-modal.open { display: flex; }
     body.modal-open { overflow: hidden; }
@@ -104,13 +106,13 @@
     <a class="chart-link" href="images/eda_group_representation.png" data-caption="Dataset representation after removing missing values">
       <img loading="lazy" src="images/eda_group_representation.png" alt="Bar charts showing representation by gender, age, education, and budget">
     </a>
-    <figcaption>Representation by gender, age, education, and budget class.</figcaption>
+    <figcaption><strong>How to read:</strong> Taller bars mean more users in that group. Compare the bar heights within each panel. <span class="takeaway"><strong>What it shows:</strong> Users aged 18–24 are heavily overrepresented, older users are underrepresented, and the two budget classes are fairly balanced.</span></figcaption>
   </figure>
   <figure class="figure-wide">
     <a class="chart-link" href="images/eda_correlation_matrix.png" data-caption="Correlation matrix of one-hot encoded variables">
       <img loading="lazy" src="images/eda_correlation_matrix.png" alt="Correlation matrix of the encoded IDOOU variables">
     </a>
-    <figcaption>Correlation matrix used to identify strong relationships and possible proxy effects.</figcaption>
+    <figcaption><strong>How to read:</strong> Dark red means a strong positive relationship, dark blue means a strong negative relationship, and pale colors mean a weak relationship. <span class="takeaway"><strong>What it shows:</strong> Age and education have some of the strongest links with the budget label, which makes them important fairness risks.</span></figcaption>
   </figure>
 </div>
 <h3>Model comparison before mitigation</h3>
@@ -119,31 +121,31 @@
     <a class="chart-link" href="images/model_accuracy_comparison.png" data-caption="Accuracy comparison of both models">
       <img loading="lazy" src="images/model_accuracy_comparison.png" alt="Accuracy and balanced accuracy comparison">
     </a>
-    <figcaption>Accuracy and balanced accuracy for Gaussian Naive Bayes and Logistic Regression.</figcaption>
+    <figcaption><strong>How to read:</strong> Higher bars mean better performance. The vertical axis starts at 0.95, so small differences look larger than they really are. <span class="takeaway"><strong>What it shows:</strong> Gaussian Naive Bayes and Logistic Regression perform almost exactly the same.</span></figcaption>
   </figure>
   <figure>
     <a class="chart-link" href="images/model_fairness_comparison.png" data-caption="Fairness comparison before mitigation">
       <img loading="lazy" src="images/model_fairness_comparison.png" alt="Fairness metrics for both models before mitigation">
     </a>
-    <figcaption>Fairness metrics for both models before mitigation.</figcaption>
+    <figcaption><strong>How to read:</strong> For these four metrics, values closer to zero are better. The light green area marks the practical −0.10 to +0.10 fairness range. <span class="takeaway"><strong>What it shows:</strong> Both models are far outside the fair range on average odds, statistical parity, and equal opportunity before mitigation.</span></figcaption>
   </figure>
   <figure>
     <a class="chart-link" href="images/gnb_confusion_matrix.png" data-caption="Gaussian Naive Bayes confusion matrix">
       <img loading="lazy" src="images/gnb_confusion_matrix.png" alt="Gaussian Naive Bayes confusion matrix">
     </a>
-    <figcaption>Gaussian Naive Bayes confusion matrix.</figcaption>
+    <figcaption><strong>How to read:</strong> The diagonal cells are correct predictions. The top-right cell contains false positives, and the bottom-left cell contains false negatives. <span class="takeaway"><strong>What it shows:</strong> Gaussian Naive Bayes makes 6 false-positive and 43 false-negative predictions.</span></figcaption>
   </figure>
   <figure>
     <a class="chart-link" href="images/lr_confusion_matrix.png" data-caption="Logistic Regression confusion matrix before mitigation">
       <img loading="lazy" src="images/lr_confusion_matrix.png" alt="Logistic Regression confusion matrix before mitigation">
     </a>
-    <figcaption>Logistic Regression confusion matrix before mitigation.</figcaption>
+    <figcaption><strong>How to read:</strong> The diagonal cells are correct predictions, while the off-diagonal cells are errors. <span class="takeaway"><strong>What it shows:</strong> Logistic Regression also makes 6 false-positive and 43 false-negative predictions, matching Gaussian Naive Bayes.</span></figcaption>
   </figure>
   <figure class="figure-wide">
     <a class="chart-link" href="images/lr_permutation_importance.png" data-caption="Permutation importance before mitigation">
       <img loading="lazy" src="images/lr_permutation_importance.png" alt="Logistic Regression permutation importance before mitigation">
     </a>
-    <figcaption>Permutation importance for the selected model before mitigation.</figcaption>
+    <figcaption><strong>How to read:</strong> A longer bar means balanced accuracy drops more when that feature is shuffled, so the model depends on it more. <span class="takeaway"><strong>What it shows:</strong> The 18–24 age indicator matters most, followed by the education indicators.</span></figcaption>
   </figure>
 </div>
 <h3>Final model after mitigation</h3>
@@ -152,19 +154,19 @@
     <a class="chart-link" href="images/fairness_before_after.png" data-caption="Fairness metrics before and after mitigation">
       <img loading="lazy" src="images/fairness_before_after.png" alt="Fairness metrics before and after mitigation">
     </a>
-    <figcaption>Fairness metrics before and after AIF360 Reweighing.</figcaption>
+    <figcaption><strong>How to read:</strong> Compare each red bar from before mitigation with its green bar after mitigation. Values closer to zero are better. <span class="takeaway"><strong>What it shows:</strong> Average odds and equal opportunity move into the target range, but statistical parity remains far from zero.</span></figcaption>
   </figure>
   <figure>
     <a class="chart-link" href="images/mitigated_lr_confusion_matrix.png" data-caption="Final mitigated Logistic Regression confusion matrix">
       <img loading="lazy" src="images/mitigated_lr_confusion_matrix.png" alt="Confusion matrix for the mitigated Logistic Regression model">
     </a>
-    <figcaption>Final confusion matrix and overall performance.</figcaption>
+    <figcaption><strong>How to read:</strong> Correct predictions appear on the diagonal, and mistakes appear off the diagonal. <span class="takeaway"><strong>What it shows:</strong> The final model removes false negatives but increases false positives to 181, showing the performance cost of mitigation.</span></figcaption>
   </figure>
   <figure class="figure-wide">
     <a class="chart-link" href="images/mitigated_lr_permutation_importance.png" data-caption="Permutation importance after mitigation">
       <img loading="lazy" src="images/mitigated_lr_permutation_importance.png" alt="Permutation importance after mitigation">
     </a>
-    <figcaption>Feature importance for the final mitigated model.</figcaption>
+    <figcaption><strong>How to read:</strong> Longer bars show features that have a larger effect on balanced accuracy when shuffled. <span class="takeaway"><strong>What it shows:</strong> After Reweighing, education matters less, but the model depends much more heavily on the 18–24 age indicator.</span></figcaption>
   </figure>
 </div>
 <h3>Education-level cohort checks</h3>
@@ -173,13 +175,13 @@
     <a class="chart-link" href="images/education_cohort_performance.png" data-caption="Performance by education-level cohort">
       <img loading="lazy" src="images/education_cohort_performance.png" alt="Performance by education-level cohort">
     </a>
-    <figcaption>Accuracy and balanced accuracy by education level.</figcaption>
+    <figcaption><strong>How to read:</strong> Bars closer to 1.0 mean stronger performance for that education group. Compare both measures within and across groups. <span class="takeaway"><strong>What it shows:</strong> Balanced accuracy stays between about 0.964 and 0.983, while ordinary accuracy is lower for high-school users.</span></figcaption>
   </figure>
   <figure>
     <a class="chart-link" href="images/education_cohort_fairness.png" data-caption="Fairness differences by education-level cohort">
       <img loading="lazy" src="images/education_cohort_fairness.png" alt="Fairness differences by education-level cohort">
     </a>
-    <figcaption>Selection-rate and true-positive-rate differences by education level.</figcaption>
+    <figcaption><strong>How to read:</strong> Bars closer to zero mean smaller differences between each education group and the other groups. <span class="takeaway"><strong>What it shows:</strong> True-positive-rate differences reach zero, but the large selection-rate gaps show that statistical parity is still unresolved.</span></figcaption>
   </figure>
 </div>
 <div class="image-modal" id="image-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Visualization viewer">
